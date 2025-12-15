@@ -1,0 +1,105 @@
+
+// APEXFIN-LEDGER DATABASE SCHEMA
+// Defines data models, relationships, and database constraints
+// Prisma auto-generates TypeScript types and SQL migrations from this file
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// TRANSACTION MODEL
+// ============================================================================
+// Core entity representing financial transactions in the ledger
+
+model Transaction {
+  // Primary Key
+  id          Int      @id @default(autoincrement())
+  
+  // Business Identifiers
+  externalId  String   @unique @db.VarChar(255)
+  
+  // Financial Data
+  amount      Int      // Stored in smallest currency unit (cents for USD)
+  currency    String   @db.VarChar(3) // ISO 4217 code
+  
+  // Transaction Lifecycle
+  status      TransactionStatus @default(PENDING)
+  type        TransactionType
+  
+  // Flexible Metadata Storage
+  metadata    Json     @default("{}")
+  
+  // Soft Delete Pattern
+  isActive    Boolean  @default(true)
+  deletedAt   DateTime?
+  
+  // Audit Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Indexes for Query Performance
+  @@index([status, createdAt(sort: Desc)], name: "idx_status_created")
+  @@index([isActive], name: "idx_active")
+  @@index([currency], name: "idx_currency")
+  @@index([externalId], name: "idx_external_id")
+  
+  // Table name in database
+  @@map("transactions")
+}
+
+// ============================================================================
+// WEBHOOK EVENT MODEL
+// ============================================================================
+// Tracks webhook deliveries for idempotency and audit trail
+
+model WebhookEvent {
+  id            Int      @id @default(autoincrement())
+  
+  // Unique event identifier from webhook source
+  eventId       String   @unique @db.VarChar(255)
+  
+  // Associated transaction
+  transactionId Int?
+  
+  // Event type classification
+  eventType     String   @db.VarChar(100)
+  
+  // Full webhook payload
+  payload       Json
+  
+  // Processing status
+  processed     Boolean  @default(true)
+  
+  // Timestamps
+  processedAt   DateTime @default(now())
+  
+  // Indexes
+  @@index([transactionId], name: "idx_webhook_transaction")
+  @@index([eventId], name: "idx_webhook_event")
+  
+  @@map("webhook_events")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum TransactionStatus {
+  PENDING      // Initial state - awaiting processing
+  PROCESSING   // Being processed by payment gateway
+  COMPLETE     // Successfully settled
+  FAILED       // Transaction failed or declined
+}
+
+enum TransactionType {
+  PAYMENT      // Customer payment (debit)
+  REFUND       // Return funds to customer (credit)
+  ADJUSTMENT   // Manual correction or reversal
+}

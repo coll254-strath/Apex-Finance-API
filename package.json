@@ -1,0 +1,47 @@
+{
+  "name": "apexfin-ledger-api",
+  "version": "1.0.0",
+  "description": "Enterprise-grade fintech transaction ledger API",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "format": "prettier --write \"src/**/*.js\"",
+    "lint": "eslint \"src/**/*.js\"",
+    "lint:fix": "eslint \"src/**/*.js\" --fix",
+    "db:studio": "prisma studio",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "node prisma/seed.js"
+  },
+  "keywords": [
+    "fintech",
+    "api",
+    "ledger",
+    "transactions",
+    "payments"
+  ],
+  "author": "ApexFin Engineering Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@express-rate-limit/prettier": "^1.1.1",
+    "@prisma/adapter-pg": "^7.1.0",
+    "@prisma/client": "^6.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "express-validator": "^7.3.1",
+    "helmet": "^8.1.0",
+    "pg": "^8.16.3",
+    "prisma": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.1",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,81 @@
+# ============================================================================
+# DOCKER COMPOSE CONFIGURATION
+# ============================================================================
+# Orchestrates multi-container application for local development
+# 
+# Usage:
+#   Start:    docker-compose up -d
+#   Stop:     docker-compose down
+#   Logs:     docker-compose logs -f api
+#   Rebuild:  docker-compose up -d --build
+
+version: '3.9'
+
+services:
+  # ==========================================================================
+  # API SERVICE
+  # ==========================================================================
+  api:
+    # Build configuration
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    
+    # Container name
+    container_name: apexfin-ledger-api
+    
+    # Port mapping (host:container)
+    ports:
+      - "3000:3000"
+    
+    # Environment variables
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # DATABASE_URL is loaded from .env file below
+    
+    # Load environment variables from file
+    env_file:
+      - .env
+    
+    # Restart policy
+    # "unless-stopped" means restart always except when manually stopped
+    restart: unless-stopped
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits (prevents container from consuming all host resources)
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Networks
+    networks:
+      - apexfin-network
+
+# ==========================================================================
+# NETWORKS
+# ==========================================================================
+networks:
+  apexfin-network:
+    driver: bridge
+    name: apexfin-network

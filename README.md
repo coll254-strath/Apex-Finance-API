@@ -1,10 +1,11 @@
-Copy and paste this into your terminal:
+Copy and paste this into your browser/postman:
+
 bashcurl https://apex-finance-api-production.up.railway.app/health
 Expected Result:
-json{
-  "status": "healthy",
-  "database": "connected"
-}
+    json{
+          "status": "healthy",
+          "database": "connected"
+        }
 ✅ If you see this, the API is working!
 
 
@@ -212,3 +213,4 @@ json{
   "error": "Duplicate Transaction",
   "existingTransaction": {"id": 1}
 }
+

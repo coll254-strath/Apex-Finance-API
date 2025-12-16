@@ -1,6 +1,6 @@
 Copy and paste this into your browser/postman:
 
-bashcurl https://apex-finance-api-production.up.railway.app/health
+curl https://apex-finance-api-production.up.railway.app/health
 Expected Result:
     json{
           "status": "healthy",
@@ -10,7 +10,7 @@ Expected Result:
 
 
 ## Create Your First Transaction 
-bashcurl -X POST https://apex-finance-api-production.up.railway.app/v1/transactions \
+curl -X POST https://apex-finance-api-production.up.railway.app/v1/transactions \
   -H "Content-Type: application/json" \
   -d '{
     "externalId": "my_first_order",
@@ -38,7 +38,8 @@ Save the id number! You'll need it for the next step.
 
 ## Check Transaction Status (30 Seconds)
 Replace 1 with your transaction ID:
-bashcurl https://apex-finance-api-production.up.railway.app/v1/transactions/1
+
+curl https://apex-finance-api-production.up.railway.app/v1/transactions/1
 Response shows current status:
 json{
   "transaction": {
@@ -49,10 +50,10 @@ json{
 }
 
 ## See All Transactions 
-bashcurl https://apex-finance-api-production.up.railway.app/v1/transactions
+curl https://apex-finance-api-production.up.railway.app/v1/transactions
 Returns list of all transactions with pagination
 
-What Happens Next?
+## What Happens Next?
 Real-World Flow:
 
 You create transaction → Status: PENDING
@@ -213,4 +214,5 @@ json{
   "error": "Duplicate Transaction",
   "existingTransaction": {"id": 1}
 }
+
 

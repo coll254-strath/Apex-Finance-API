@@ -1,3 +1,35 @@
+# All commands:
+#### Test API health
+curl http://localhost:3000/health
+
+#### Create transaction
+curl -X POST http://localhost:3000/v1/transactions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "externalId": "test_001",
+    "amount": 10000,
+    "currency": "USD",
+    "type": "PAYMENT"
+  }'
+
+#### Get transaction
+curl http://localhost:3000/v1/transactions/1
+
+#### List transactions
+curl "http://localhost:3000/v1/transactions?limit=10"
+
+#### Update transaction
+curl -X PATCH http://localhost:3000/v1/transactions/1 \
+  -H "Content-Type: application/json" \
+  -d '{"status": "PROCESSING"}'
+
+#### Delete transaction
+curl -X DELETE http://localhost:3000/v1/transactions/1
+
+
+
+
+## How to test the API
 Copy and paste this into your browser/postman:
 
 curl https://apex-finance-api-production.up.railway.app/health
@@ -6,10 +38,10 @@ Expected Result:
           "status": "healthy",
           "database": "connected"
         }
-✅ If you see this, the API is working!
+✅ If you see this on your console, the API is working!
 
 
-## Create Your First Transaction 
+#### Create Your First Transaction 
 curl -X POST https://apex-finance-api-production.up.railway.app/v1/transactions \
   -H "Content-Type: application/json" \
   -d '{
@@ -36,7 +68,7 @@ json{
 }
 Save the id number! You'll need it for the next step.
 
-## Check Transaction Status (30 Seconds)
+#### Check Transaction Status (30 Seconds)
 Replace 1 with your transaction ID:
 
 curl https://apex-finance-api-production.up.railway.app/v1/transactions/1
@@ -49,29 +81,29 @@ json{
   }
 }
 
-## See All Transactions 
+#### See All Transactions 
 curl https://apex-finance-api-production.up.railway.app/v1/transactions
 Returns list of all transactions with pagination
 
-## What Happens Next?
+#### What Happens Next?
 Real-World Flow:
 
 You create transaction → Status: PENDING
 Payment gateway processes → Status: PROCESSING
 Payment completes → Status: COMPLETE
 
-## Test This Flow:
+##### Test This Flow:
 bash# Step 1: Update to PROCESSING
 curl -X PATCH https://apex-finance-api-production.up.railway.app/v1/transactions/1 \
   -H "Content-Type: application/json" \
   -d '{"status": "PROCESSING"}'
 
-# Step 2: Update to COMPLETE
+##### Step 2: Update to COMPLETE
 curl -X PATCH https://apex-finance-api-production.up.railway.app/v1/transactions/1 \
   -H "Content-Type: application/json" \
   -d '{"status": "COMPLETE"}'
 
-# Step 3: Check final status
+##### Step 3: Check final status
 curl https://apex-finance-api-production.up.railway.app/v1/transactions/1
 
 Key Concepts 
@@ -84,12 +116,12 @@ Why? Avoids decimal errors in financial calculations.
 bash# First request - creates transaction
 curl -X POST .../v1/transactions \
   -d '{"externalId": "order_123", "amount": 5000, ...}'
-# Returns: 201 Created
+##### Returns: 201 Created
 
-# Second request - same externalId
+##### Second request - same externalId
 curl -X POST .../v1/transactions \
   -d '{"externalId": "order_123", "amount": 5000, ...}'
-# Returns: 409 Conflict (existing transaction)
+##### Returns: 409 Conflict (existing transaction)
 Why? Prevents charging customers twice if they retry.
 3. Status Flow is One-Way
 PENDING → PROCESSING → COMPLETE ✅
@@ -101,7 +133,7 @@ Cannot go backwards:
 ❌ FAILED → PENDING (not allowed)
 
 
-## Common Use Cases
+##### Common Use Cases
 E-Commerce Checkout
 bash# Customer clicks "Pay Now"
 curl -X POST https://apex-finance-api-production.up.railway.app/v1/transactions \
@@ -118,7 +150,7 @@ curl -X POST https://apex-finance-api-production.up.railway.app/v1/transactions 
     }
   }'
 
-# Poll for completion
+##### Poll for completion
 while true; do
   STATUS=$(curl -s https://apex-finance-api-production.up.railway.app/v1/transactions/1 | \
            jq -r '.transaction.status')
@@ -129,7 +161,7 @@ while true; do
   fi
   sleep 2
 done
-## Process Refund
+##### Process Refund
 bashcurl -X POST https://apexfin-ledger-api.onrender.com/v1/transactions \
   -H "Content-Type: application/json" \
   -d '{
@@ -142,6 +174,7 @@ bashcurl -X POST https://apexfin-ledger-api.onrender.com/v1/transactions \
       "reason": "customer_request"
     }
   }'
+  
 Dashboard: Show Recent Transactions
 bash# Get last 10 completed transactions
 curl "https://apexfin-ledger-api.onrender.com/v1/transactions?status=COMPLETE&limit=10"
@@ -164,12 +197,13 @@ async function createPayment(amount, orderId) {
   return response.data.transaction;
 }
 
+
 // Usage
 const transaction = await createPayment(5000, 'ORD-123');
 console.log('Transaction ID:', transaction.id);
 
 
-# Usage
+#### Usage
 transaction = create_payment(5000, 'ORD-123')
 print(f"Transaction ID: {transaction['id']}")
 PHP
@@ -194,7 +228,7 @@ $transaction = json_decode($response, true)['transaction'];
 echo "Transaction ID: " . $transaction['id'];
 ?>
 
-## Troubleshooting
+#### Troubleshooting
 Error: "Validation Error"
 Problem:
 json{
@@ -216,3 +250,4 @@ json{
 }
 
 
+Happy testing !!!

@@ -1,0 +1,53 @@
+# ============================================================================
+# DOCKERIGNORE
+# ============================================================================
+# Excludes files from Docker build context for faster builds
+
+# Node modules (will be installed in container)
+node_modules/
+npm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Git files
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files
+tests/
+coverage/
+*.test.js
+
+# Documentation
+README.md
+docs/
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Docker files (don't include in build context)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Prisma migrations (applied separately in production)
+prisma/migrations/
